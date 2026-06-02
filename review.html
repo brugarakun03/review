@@ -1,0 +1,866 @@
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ITECT-101 Final Exam Reviewer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --card: #1a1a26;
+    --border: #2a2a3e;
+    --accent: #e63946;
+    --accent2: #f4a261;
+    --accent3: #457b9d;
+    --text: #e8e8f0;
+    --muted: #8888aa;
+    --correct: #2a9d8f;
+    --wrong: #e63946;
+    --tag-bg: #1e1e30;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  header {
+    position: relative;
+    padding: 60px 40px 40px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #12121a 0%, #1a0a0f 100%);
+    overflow: hidden;
+  }
+  header::after {
+    content: 'HCI';
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 180px;
+    font-weight: 800;
+    color: rgba(230,57,70,0.05);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .header-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  h1 span { color: var(--accent); }
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 300;
+    max-width: 500px;
+    line-height: 1.6;
+  }
+
+  /* EXAM BREAKDOWN BAR */
+  .exam-bar {
+    display: flex;
+    gap: 0;
+    margin: 32px 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 8px;
+  }
+  .bar-seg { height: 100%; }
+
+  /* NAV TABS */
+  .nav {
+    display: flex;
+    gap: 4px;
+    padding: 0 40px;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 14px 18px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN CONTENT */
+  .container { padding: 40px; max-width: 960px; }
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 16px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #3a3a55; }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .section-desc {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 28px;
+    font-weight: 300;
+  }
+
+  .lesson-tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 10px;
+    font-family: 'Syne', sans-serif;
+  }
+
+  /* QUIZ STYLES */
+  .q-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .q-text {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    font-weight: 400;
+  }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt-btn {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .opt-btn:hover:not(:disabled) { background: #22223a; border-color: #4a4a6a; }
+  .opt-btn.correct { background: rgba(42,157,143,0.15); border-color: var(--correct); color: #2dd4bf; }
+  .opt-btn.wrong { background: rgba(230,57,70,0.15); border-color: var(--wrong); color: #ff6b7a; }
+  .opt-btn:disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.5;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct-fb { background: rgba(42,157,143,0.1); border: 1px solid rgba(42,157,143,0.3); color: #2dd4bf; }
+  .feedback.wrong-fb { background: rgba(230,57,70,0.1); border: 1px solid rgba(230,57,70,0.3); color: #ff8a94; }
+
+  /* ID / ENUM / T-F */
+  .reveal-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    padding: 8px 16px;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: all 0.2s;
+  }
+  .reveal-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+  .answer-box {
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: rgba(69,123,157,0.1);
+    border: 1px solid rgba(69,123,157,0.3);
+    border-radius: 6px;
+    font-size: 14px;
+    color: #90c4e0;
+    display: none;
+    line-height: 1.6;
+  }
+  .answer-box.show { display: block; }
+  .answer-box strong { color: var(--accent2); }
+
+  /* TRUE/FALSE */
+  .tf-row { display: flex; gap: 8px; margin-top: 12px; }
+  .tf-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--tag-bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tf-btn:hover:not(:disabled) { background: #22223a; }
+  .tf-btn.correct { background: rgba(42,157,143,0.15); border-color: var(--correct); color: #2dd4bf; }
+  .tf-btn.wrong { background: rgba(230,57,70,0.15); border-color: var(--wrong); color: #ff6b7a; }
+  .tf-btn:disabled { cursor: default; }
+
+  /* ANALYSIS SECTION */
+  .diagram-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 16px 0;
+  }
+  .track-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .track-table th {
+    background: var(--accent3);
+    color: #fff;
+    padding: 8px 12px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-align: left;
+  }
+  .track-table th:first-child { border-radius: 4px 0 0 0; }
+  .track-table th:last-child { border-radius: 0 4px 0 0; }
+  .track-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.5; }
+  .track-table tr.dev td { background: rgba(69,123,157,0.08); }
+  .track-table tr.ux td { background: rgba(244,162,97,0.08); }
+  .track-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 4px;
+  }
+  .dev-label { background: rgba(69,123,157,0.3); color: #90c4e0; }
+  .ux-label { background: rgba(244,162,97,0.3); color: #f4a261; }
+
+  /* SCORE */
+  .score-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .score-label { font-family: 'Syne', sans-serif; font-size: 13px; color: var(--muted); }
+  .score-val { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; }
+  .score-val .denom { font-size: 16px; color: var(--muted); }
+  .reset-btn {
+    background: var(--accent);
+    border: none;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 8px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .reset-btn:hover { opacity: 0.85; }
+
+  /* CHEATSHEET QUICK NOTES */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+  .mini-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .mini-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .mini-list { list-style: none; }
+  .mini-list li { font-size: 13px; color: var(--text); padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.04); line-height: 1.5; }
+  .mini-list li:last-child { border-bottom: none; }
+  .mini-list li::before { content: '→ '; color: var(--accent); font-size: 12px; }
+
+  /* Progress dots */
+  .prog-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--border); margin: 0 2px; transition: background 0.2s; }
+  .prog-dot.done { background: var(--correct); }
+  .prog-dot.wrong-d { background: var(--wrong); }
+
+  .note-box {
+    background: rgba(244,162,97,0.06);
+    border-left: 3px solid var(--accent2);
+    border-radius: 0 6px 6px 0;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 640px) {
+    header, .container { padding: 28px 20px; }
+    .nav { padding: 0 20px; }
+    .exam-bar { margin: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">ITECT-101</div>
+  <h1>Advanced <span>HCI</span><br>Final Exam Reviewer</h1>
+  <p class="subtitle">Interactive practice for all exam types — Multiple Choice, Identification, Enumeration, True/False, and Analysis.</p>
+</header>
+
+<!-- EXAM BREAKDOWN BAR (visual weight indicator) -->
+<div class="exam-bar" style="margin: 24px 40px 0;">
+  <div class="bar-seg" style="width:30%;background:#e63946;" title="MC: 40pts"></div>
+  <div class="bar-seg" style="width:19%;background:#f4a261;" title="ID: 25pts"></div>
+  <div class="bar-seg" style="width:19%;background:#457b9d;" title="Enum: 25pts"></div>
+  <div class="bar-seg" style="width:19%;background:#2a9d8f;" title="T/F: 25pts"></div>
+  <div class="bar-seg" style="width:13%;background:#6a4c93;" title="Analysis: 18pts"></div>
+</div>
+<div style="display:flex;gap:16px;padding:10px 40px 0;flex-wrap:wrap;">
+  <span style="font-size:11px;color:#e63946;font-family:Syne,sans-serif;font-weight:700;">■ MC (40)</span>
+  <span style="font-size:11px;color:#f4a261;font-family:Syne,sans-serif;font-weight:700;">■ ID (25)</span>
+  <span style="font-size:11px;color:#457b9d;font-family:Syne,sans-serif;font-weight:700;">■ ENUM (25)</span>
+  <span style="font-size:11px;color:#2a9d8f;font-family:Syne,sans-serif;font-weight:700;">■ T/F (25)</span>
+  <span style="font-size:11px;color:#6a4c93;font-family:Syne,sans-serif;font-weight:700;">■ ANALYSIS (18)</span>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="switchTab('mc')">Multiple Choice</button>
+  <button class="nav-btn" onclick="switchTab('id')">Identification</button>
+  <button class="nav-btn" onclick="switchTab('enum')">Enumeration</button>
+  <button class="nav-btn" onclick="switchTab('tf')">True or False</button>
+  <button class="nav-btn" onclick="switchTab('analysis')">Analysis</button>
+  <button class="nav-btn" onclick="switchTab('cheat')">Quick Notes</button>
+</nav>
+
+<div class="container">
+
+  <!-- ===================== MULTIPLE CHOICE ===================== -->
+  <div id="mc" class="section active">
+    <div class="section-title">Multiple Choice</div>
+    <div class="section-desc">40 items — 25 from midterm topics. Click an option to check your answer.</div>
+    <div class="score-bar">
+      <div><div class="score-label">SCORE</div><div class="score-val" id="mc-score">0 <span class="denom">/ 0</span></div></div>
+      <button class="reset-btn" onclick="resetSection('mc')">Reset</button>
+    </div>
+    <div id="mc-questions"></div>
+  </div>
+
+  <!-- ===================== IDENTIFICATION ===================== -->
+  <div id="id" class="section">
+    <div class="section-title">Identification</div>
+    <div class="section-desc">25 items — Read the clue and reveal the answer when ready.</div>
+    <div id="id-questions"></div>
+  </div>
+
+  <!-- ===================== ENUMERATION ===================== -->
+  <div id="enum" class="section">
+    <div class="section-title">Enumeration</div>
+    <div class="section-desc">25 items — Try to recall all items before revealing.</div>
+    <div id="enum-questions"></div>
+  </div>
+
+  <!-- ===================== TRUE OR FALSE ===================== -->
+  <div id="tf" class="section">
+    <div class="section-title">True or False</div>
+    <div class="section-desc">25 items — Tap TRUE or FALSE for each statement.</div>
+    <div class="score-bar">
+      <div><div class="score-label">SCORE</div><div class="score-val" id="tf-score">0 <span class="denom">/ 0</span></div></div>
+      <button class="reset-btn" onclick="resetSection('tf')">Reset</button>
+    </div>
+    <div id="tf-questions"></div>
+  </div>
+
+  <!-- ===================== ANALYSIS ===================== -->
+  <div id="analysis" class="section">
+    <div class="section-title">Analysis</div>
+    <div class="section-desc">18 items — Focus: Parallel Tracks Model (Lesson 7). Review the model then answer.</div>
+
+    <div class="note-box">
+      📌 <strong style="color:var(--accent2);">Exam Tip:</strong> The analysis section specifically reviews the <strong>Parallel Tracks Model</strong> from Lesson 7. Make sure you understand how Dev Track and UX Track run in parallel cycles.
+    </div>
+
+    <div class="card">
+      <div class="mini-title">THE PARALLEL TRACKS MODEL</div>
+      <div class="diagram-box">
+        <table class="track-table">
+          <thead>
+            <tr>
+              <th>Track</th>
+              <th>Cycle 0</th>
+              <th>Cycle 1</th>
+              <th>Cycle 2</th>
+              <th>Cycle 3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="dev">
+              <td><span class="track-label dev-label">DEV</span></td>
+              <td>Research &amp; Vision</td>
+              <td>Technical Setup</td>
+              <td>Implement C1 Designs</td>
+              <td>Implement C2 Designs</td>
+            </tr>
+            <tr class="ux">
+              <td><span class="track-label ux-label">UX</span></td>
+              <td>UX Research &amp; Product Vision</td>
+              <td>Design for C2, Gather data for C3</td>
+              <td>Design for C3, Eval C1 build</td>
+              <td>Design for C4, Eval C2 build</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:14px;font-size:12px;color:var(--muted);line-height:1.8;">
+          <strong style="color:var(--accent2);">Key insight:</strong> UX is always ONE cycle AHEAD of Dev. While Dev implements Cycle N designs, UX is already designing for Cycle N+1 and evaluating the current build.<br>
+          <strong style="color:var(--accent2);">Lean UX Process:</strong> Articulate → Design → Build MVP → Release &amp; Capture Feedback → Repeat
+        </div>
+      </div>
+    </div>
+
+    <div id="analysis-questions"></div>
+  </div>
+
+  <!-- ===================== QUICK NOTES / CHEAT SHEET ===================== -->
+  <div id="cheat" class="section">
+    <div class="section-title">Quick Notes</div>
+    <div class="section-desc">Key terms and lists — great for last-minute review before the exam.</div>
+    <div class="grid-2" id="cheat-content"></div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+
+const mcData = [
+  // LESSON 1
+  { lesson:'L1', q:'What is HCI according to the Interaction Design Foundation?', opts:['A field focused only on mobile apps','A multidisciplinary field focusing on the design of computer technology and the interaction between humans and computers','A branch of software engineering','A field focused on graphic design'], ans:1 },
+  { lesson:'L1', q:'Which of the following BEST describes the difference between Interaction Design (ID) and HCI?', opts:['ID is older than HCI','HCI is broader and covers all technologies, while ID is narrower','HCI had a narrower focus on computing systems while ID was broader, concerned with all technologies','They are exactly the same field'], ans:2 },
+  { lesson:'L1', q:'Which usability goal refers to how easy a product is to remember how to use after it has been learned?', opts:['Learnability','Efficiency','Memorability','Utility'], ans:2 },
+  { lesson:'L1', q:'Which phase of the Double Diamond comes FIRST?', opts:['Define','Develop','Deliver','Discover'], ans:3 },
+  { lesson:'L1', q:'The "Iterative Design" principle in user-centered design means:', opts:['Designing once and shipping','Fixing problems found in testing, then testing again','Skipping user testing to save time','Designing based only on developer preferences'], ans:1 },
+  { lesson:'L1', q:'Which interaction type involves the SYSTEM initiating the interaction?', opts:['Instructing','Manipulating','Exploring','Responding'], ans:3 },
+  { lesson:'L1', q:'A conceptual model is best described as:', opts:['A 3D rendering of a product','A high-level description of how a system is organized and operates','A low-fidelity paper prototype','A detailed code specification'], ans:1 },
+  { lesson:'L1', q:'Accessibility can be achieved through:', opts:['Inclusive design and assistive technology','Only screen readers','Only touch interfaces','Reducing features'], ans:0 },
+  // LESSON 2
+  { lesson:'L2', q:'Experiential cognition is characterized by:', opts:['Deliberate decision-making','Intuitive and effortless reactions to events','Complex reasoning and judgment','Creative problem-solving only'], ans:1 },
+  { lesson:'L2', q:'The "Gulf of Execution" refers to:', opts:['The gap from the physical system back to the user','The distance from the user to the physical system','The gap in memory between tasks','The difference between expert and novice users'], ans:1 },
+  { lesson:'L2', q:'Which cognitive process involves acquiring information through the five senses?', opts:['Memory','Attention','Perception','Learning'], ans:2 },
+  { lesson:'L2', q:'Distributed cognition refers to:', opts:['Splitting mental tasks into subtasks','Interacting with external representations like books and computers, and with each other','Using only internal memory','The brain processing visual data'], ans:1 },
+  { lesson:'L2', q:'Which type of learning occurs without any intention to learn?', opts:['Intentional learning','Reflective learning','Incidental learning','Rote learning'], ans:2 },
+  // LESSON 3
+  { lesson:'L3', q:"According to Don Norman's three levels, the Visceral Level focuses on:", opts:['Usability and how things work','Memories and personal value','First impressions based on appearance','Brand attachment'], ans:2 },
+  { lesson:'L3', q:'Affective computing involves systems that can:', opts:['Only display text','Recognize and express emotions','Process large datasets faster','Improve typing speed'], ans:1 },
+  { lesson:'L3', q:'Affdex detects how many emotions?', opts:['4','5','6','8'], ans:2 },
+  { lesson:'L3', q:'Which level of emotional design relates to meaning, memory, and personal value?', opts:['Visceral','Behavioral','Reflective','Functional'], ans:2 },
+  // LESSON 4
+  { lesson:'L4', q:'What does WIMP stand for?', opts:['Windows, Icons, Menus, Pointer','Widgets, Input, Monitors, Processor','Windows, Interface, Mouse, Panel','Workflow, Icons, Menus, Page'], ans:0 },
+  { lesson:'L4', q:'Which interface type uses physical objects connected to digital actions?', opts:['Haptic','Multimodal','Tangible','Augmented Reality'], ans:2 },
+  { lesson:'L4', q:'A Command-Line Interface (CLI) is best suited for:', opts:['Beginners with no technical background','Expert users performing batch operations','Touchscreen-only devices','Users who prefer visual navigation'], ans:1 },
+  { lesson:'L4', q:'Augmented Reality (AR) is best described as:', opts:['A fully simulated 3D world in a headset','Overlaying digital objects onto the real world','A voice-only interaction method','A type of haptic feedback'], ans:1 },
+  // LESSON 5
+  { lesson:'L5', q:'A Persona is best described as:', opts:['A real user involved in testing','A realistic fictional character representing a synthesis of multiple real users','A use case diagram','A low-fidelity prototype'], ans:1 },
+  { lesson:'L5', q:'Qualitative data is:', opts:['Measurable and numerical','Non-numerical and descriptive, capturing opinions and emotions','Always collected through experiments','Based only on task completion time'], ans:1 },
+  { lesson:'L5', q:'Which data-gathering technique involves spending time with individuals observing their activities as they happen?', opts:['Questionnaire','Interview','Direct observation','Analytics'], ans:2 },
+  // LESSON 6
+  { lesson:'L6', q:'A high-fidelity prototype differs from a low-fidelity prototype in that it:', opts:['Uses paper and cardboard','Looks more like the final product and provides more functionality','Is always digital','Is faster to create'], ans:1 },
+  { lesson:'L6', q:'Storyboarding is a type of:', opts:['High-fidelity prototyping','User testing','Low-fidelity prototyping','Heuristic evaluation'], ans:2 },
+  { lesson:'L6', q:'In the relationship between Persona, Scenario, and Use Case — which tells the STORY of how the persona reaches the goal?', opts:['Use Case','Goal','Scenario','Requirement'], ans:2 },
+  // LESSON 7
+  { lesson:'L7', q:'In the Parallel Tracks Model, UX is always:', opts:['Behind Dev by one cycle','Ahead of Dev by one cycle','Synchronized with Dev in the same cycle','Only active in Cycle 0'], ans:1 },
+  { lesson:'L7', q:'A Dark Pattern is best described as:', opts:['A color scheme using dark colors','Deliberately deceptive UI designed to trick users for business gain','A valid accessibility design choice','A type of anti-gravity interface'], ans:1 },
+  { lesson:'L7', q:'Which tool is known specifically for quick wireframing?', opts:['Axure RP','Sketch','Balsamiq','GitHub'], ans:2 },
+  { lesson:'L7', q:'Agile development cycles can be as short as:', opts:['6 months','1 month','2 weeks','1 year'], ans:2 },
+  // LESSON 8
+  { lesson:'L8', q:'Formative evaluation is conducted:', opts:['After product launch to benchmark competitors','During design to identify problems while they are still cheap to fix','Only in lab settings','Only through heuristic evaluation'], ans:1 },
+  { lesson:'L8', q:'The Hawthorne Effect refers to:', opts:['Users ignoring the interface','Participants changing behavior just from being observed','Evaluators introducing bias in analysis','Data being collected without consent'], ans:1 },
+  { lesson:'L8', q:'Heuristic Evaluation is done by:', opts:['Real end-users in their homes','Usability experts applying rules of thumb to identify likely problems','Automated testing scripts','Focus groups in a lab'], ans:1 },
+  { lesson:'L8', q:'Ecological validity refers to:', opts:['Whether the method is environmentally sustainable','How much the evaluation environment distorts results','How consistent results are across repeated tests','Whether the method measures what it intends to measure'], ans:1 },
+  { lesson:'L8', q:'A Cognitive Walkthrough focuses primarily on:', opts:['Memorability','Learnability','Emotional response','System efficiency'], ans:1 },
+  { lesson:'L8', q:'Analytics can tell you WHAT users do, but NOT:', opts:['When they do it','How often they do it','Why they do it','Which page they are on'], ans:2 },
+  { lesson:'L8', q:'Lab experiments remove extraneous variables so researchers can:', opts:['Observe natural user behavior','Confidently attribute results to a specific interface feature','Avoid writing hypotheses','Conduct field studies'], ans:1 },
+  { lesson:'L8', q:'Summative evaluation assesses overall success and compares against:', opts:['User personas','Original usability specifications or prior versions','Parallel track cycles','Conceptual models'], ans:1 },
+];
+
+const idData = [
+  { clue:'The multidisciplinary field focusing on the design of computer technology and the interaction between humans and computers.', ans:'Human-Computer Interaction (HCI)' },
+  { clue:'A usability goal that refers to how easy a system is to learn to use.', ans:'Learnability' },
+  { clue:'A usability goal that refers to how easy a product is to remember how to use once learned.', ans:'Memorability' },
+  { clue:'Refers to how a product behaves and is used by people in the real world.', ans:'User Experience (UX)' },
+  { clue:'The four-phase design process: Discover, Define, Develop, Deliver.', ans:'Double Diamond' },
+  { clue:'A state of mind where people perceive and react to events intuitively and effortlessly.', ans:'Experiential Cognition' },
+  { clue:'The gap from the user to the physical system.', ans:'Gulf of Execution' },
+  { clue:'The gap from the physical system back to the user.', ans:'Gulf of Evaluation' },
+  { clue:'The level of emotional design that focuses on first impressions, colors, and shapes.', ans:'Visceral Level' },
+  { clue:'Technology that involves systems which can recognize and express emotions.', ans:'Affective Computing' },
+  { clue:'The AI system that uses webcams and machine learning to detect facial expressions.', ans:'Affdex' },
+  { clue:'The traditional GUI model consisting of Windows, Icons, Menus, and a Pointing device.', ans:'WIMP' },
+  { clue:'Interface type that provides physical feedback such as vibration or force.', ans:'Haptic Interface' },
+  { clue:'Interface type that overlays digital objects onto the real world.', ans:'Augmented Reality (AR)' },
+  { clue:'Rich, detailed fictional characters representing a synthesis of multiple real users.', ans:'Persona' },
+  { clue:'A story that describes one specific use of a product or one example of achieving a goal.', ans:'Scenario' },
+  { clue:'A prototype that does NOT look much like the final product nor provide the same functionality.', ans:'Low-Fidelity Prototype' },
+  { clue:'Reusable solutions to common interaction design problems.', ans:'Design Patterns' },
+  { clue:'Deliberately deceptive UI designed to trick users for business gain.', ans:'Dark Pattern' },
+  { clue:'The process of collecting and analyzing data about user experiences with a design to improve it.', ans:'Evaluation' },
+  { clue:'An evaluation method where usability experts apply rules of thumb to identify likely problems.', ans:'Heuristic Evaluation' },
+  { clue:'The effect where participants change their behavior simply from being observed.', ans:'Hawthorne Effect' },
+  { clue:'Evaluation conducted DURING design to identify problems while still cheap to fix.', ans:'Formative Evaluation' },
+  { clue:'Evaluation conducted AT DESIGN COMPLETION to assess overall success.', ans:'Summative Evaluation' },
+  { clue:'An evaluation method that simulates a user\'s problem-solving at each dialogue step; focuses on learnability.', ans:'Cognitive Walkthrough' },
+];
+
+const enumData = [
+  { title:'6 Usability Goals', hint:'E, E, S, U, L, M', ans:['Effectiveness','Efficiency','Safety','Utility','Learnability','Memorability'] },
+  { title:'4 Phases of the Double Diamond', hint:'D, D, D, D', ans:['Discover','Define','Develop','Deliver'] },
+  { title:'4 Activities of Interaction Design', hint:'D, D, P, E', ans:['Discovering Requirements','Designing Alternatives','Prototyping','Evaluating'] },
+  { title:'3 User-Centered Approach Principles', hint:'Early focus, Empirical, Iterative', ans:['Early focus on users and tasks','Empirical measurement','Iterative design'] },
+  { title:'5 Types of Interaction', hint:'I, C, M, E, R', ans:['Instructing','Conversing','Manipulating','Exploring','Responding'] },
+  { title:'6 Kinds of Cognitive Processes', hint:'A, P, M, L, R, P', ans:['Attention','Perception','Memory','Learning','Reading/Speaking/Listening','Problem-solving/Planning/Reasoning/Decision-making'] },
+  { title:'2 Types of Cognition', hint:'Experiential & Reflective', ans:['Experiential Cognition','Reflective Cognition'] },
+  { title:'6 Cognitive Frameworks', hint:'Mental, Gulf, Info, Dist, Ext, Emb', ans:['Mental Models','Gulf of Execution & Evaluation','Information Processing','Distributed Cognition','External Cognition','Embodied Interaction'] },
+  { title:"3 Levels of Emotional Design (Don Norman)", hint:'V, B, R', ans:['Visceral Level','Behavioral Level','Reflective Level'] },
+  { title:'4 Technologies for Detecting Emotions', hint:'Facial, Bio, Voice, Body', ans:['Facial recognition (cameras)','Biosensors (skin response)','Voice analysis (tone, pitch)','Body movement sensors'] },
+  { title:'6 Emotions Detected by Affdex', hint:'A, C, D, F, J, S', ans:['Anger','Contempt','Disgust','Fear','Joy','Sadness'] },
+  { title:'3 Data Gathering Techniques', hint:'I, Q, O', ans:['Interviews','Questionnaires','Observation'] },
+  { title:'2 Types of Data', hint:'Quantitative & Qualitative', ans:['Quantitative Data (Measurable/Numerical)','Qualitative Data (Descriptive/Observational)'] },
+  { title:'2 Aspects of Design (Lesson 6)', hint:'Conceptual & Concrete', ans:['Conceptual Part (the idea — what it will do and how it will behave)','Concrete Aspect (the details — menus, haptics, graphics)'] },
+  { title:'3 Types of Low-Fidelity Prototyping', hint:'S, S, I', ans:['Storyboarding','Sketching','Index Cards'] },
+  { title:'4 Pillars of UX Support in Practice', hint:'A, D, O, T', ans:['AgileUX','Design Patterns','Open Source','Design Tools'] },
+  { title:'Types of Patterns & Anti-Patterns', hint:'Design Pattern, Pattern Language, Anti-Pattern, Dark Pattern', ans:['Design Pattern — proven solution to a recurring problem','Pattern Language — network of related patterns','Anti-Pattern — poor solution that looks acceptable','Dark Pattern — deliberately deceptive UI'] },
+  { title:'3 Types of Evaluation (by setting)', hint:'Controlled, Natural, Any', ans:['Controlled Settings (usability testing, experiments)','Natural Settings (field studies, in-the-wild)','Any Setting (heuristics, analytics, models)'] },
+  { title:'5 Quality Criteria for Evaluation', hint:'R, V, E, B, S', ans:['Reliability','Validity','Ecological Validity','Bias','Scope'] },
+  { title:'Lean UX Process Steps', hint:'Articulate → Design → Build → Release → Repeat', ans:['Articulate outcomes, assumptions & hypotheses','Design it','Build a Minimum Viable Product (MVP)','Release to users & capture real feedback','Repeat — learn and iterate'] },
+];
+
+const tfData = [
+  { stmt:'HCI and Interaction Design have exactly the same scope.', ans:false, explain:'HCI historically had a narrower focus on computing systems; ID is broader.' },
+  { stmt:'Memorability refers to how easy a system is to learn for the first time.', ans:false, explain:'That is Learnability. Memorability is about remembering how to use it after it has been learned.' },
+  { stmt:'The Double Diamond has four phases: Discover, Define, Develop, and Deliver.', ans:true, explain:'Correct! These are the four phases of the Double Diamond design process.' },
+  { stmt:'Reflective cognition involves effortless and intuitive reactions.', ans:false, explain:'That describes Experiential Cognition. Reflective cognition involves mental effort and judgment.' },
+  { stmt:'The Gulf of Evaluation is the distance from the physical system back to the user.', ans:true, explain:'Correct! The Gulf of Execution is user → system; Gulf of Evaluation is system → user.' },
+  { stmt:'Perception involves acquiring information through the five senses.', ans:true, explain:'Correct! Plus kinesthesia (awareness of body position and movement).' },
+  { stmt:'The Visceral Level of emotional design is concerned with memories and personal value.', ans:false, explain:'That is the Reflective Level. Visceral focuses on first impressions and appearance.' },
+  { stmt:'Affdex detects 8 emotions.', ans:false, explain:'Affdex detects 6 emotions: Anger, Contempt, Disgust, Fear, Joy, and Sadness.' },
+  { stmt:'A CLI is generally easier to use for beginners than a GUI.', ans:false, explain:'CLIs are harder for beginners; they require memorization and are efficient for expert users.' },
+  { stmt:'Tangible interfaces use physical objects connected to digital actions.', ans:true, explain:'Correct! Tangible interfaces bridge the physical and digital.' },
+  { stmt:'A Persona is based on a real, specific person.', ans:false, explain:'Personas are fictional characters that represent a synthesis of multiple real users.' },
+  { stmt:'A Scenario defines WHEN, WHERE, and HOW the story takes place.', ans:true, explain:'Correct! The scenario is the narrative context in which the persona achieves the goal.' },
+  { stmt:'A high-fidelity prototype provides less functionality than a low-fidelity one.', ans:false, explain:'It is the opposite — high-fidelity prototypes look more like the final product and have MORE functionality.' },
+  { stmt:'Storyboarding is a type of high-fidelity prototyping.', ans:false, explain:'Storyboarding is a low-fidelity prototyping technique.' },
+  { stmt:'In the Parallel Tracks Model, UX is always one cycle ahead of Dev.', ans:true, explain:'Correct! While Dev implements current designs, UX is designing the NEXT cycle.' },
+  { stmt:'A Dark Pattern is a poor design solution that accidentally causes usability problems.', ans:false, explain:'Dark patterns are DELIBERATELY deceptive, not accidental. Accidentally poor designs are Anti-Patterns.' },
+  { stmt:'Formative evaluation is conducted at the completion of design.', ans:false, explain:'Formative evaluation is during design. Summative evaluation is at design completion.' },
+  { stmt:'The Hawthorne Effect means participants change their behavior when being observed.', ans:true, explain:'Correct! This is a major challenge for natural and lab-based evaluation methods.' },
+  { stmt:'Analytics can reveal WHY users do things, not just WHAT they do.', ans:false, explain:'Analytics shows WHAT users do but NOT WHY. Qualitative methods are needed for the "why."' },
+  { stmt:'Heuristic Evaluation requires real end-users in their natural environment.', ans:false, explain:'Heuristic Evaluation is done by EXPERTS, with no direct user involvement required.' },
+  { stmt:'Ecological validity is high in lab settings.', ans:false, explain:'Lab settings have LOW ecological validity. Ethnographic/field studies have higher ecological validity.' },
+  { stmt:'A Cognitive Walkthrough primarily focuses on the learnability of a system.', ans:true, explain:'Correct! It simulates a new user\'s problem-solving at each step to assess learnability.' },
+  { stmt:'Inclusiveness means accommodating the widest possible number of people.', ans:true, explain:'Correct! Inclusiveness means being fair, open, and equal to everyone.' },
+  { stmt:'The "Responding" interaction type was part of the original four types proposed by Preece et al. (2002).', ans:false, explain:'Responding was added LATER by Christopher Lueg et al. (2019). The original four were: Instructing, Conversing, Manipulating, and Exploring.' },
+  { stmt:'Open Source resources in UX design are community-driven and freely available for reuse.', ans:true, explain:'Correct! They are available under licenses that allow modification without standard copyright restrictions.' },
+];
+
+const analysisData = [
+  { q:'In the Parallel Tracks Model, what is the Dev Track doing in Cycle 1?', ans:'Technical Setup — setting up the development environment and infrastructure.' },
+  { q:'While Dev is doing Technical Setup in Cycle 1, what is the UX Track doing?', ans:'Designing for C2 (the next cycle\'s features) AND gathering data for C3.' },
+  { q:'Why is the UX Track always one cycle AHEAD of the Dev Track?', ans:'So that by the time developers are ready to implement a feature, the UX designs are already complete and tested. This prevents development from being blocked waiting for designs.' },
+  { q:'In Cycle 2, what two things is the UX Track doing simultaneously?', ans:'Designing for C3 (future features) AND evaluating the C1 build (what Dev just built).' },
+  { q:'What does MVP stand for in the Lean UX Process?', ans:'Minimum Viable Product — the simplest version of a product that can be released to users to capture real feedback.' },
+  { q:'List the 4 steps of the Lean UX Process in order.', ans:'1. Articulate outcomes, assumptions & hypotheses → 2. Design it → 3. Build a Minimum Viable Product (MVP) → 4. Release to users & capture real feedback. Then repeat.' },
+  { q:'What is the main ADVANTAGE of using the Parallel Tracks Model in UX?', ans:'It integrates UX into fast agile cycles without slowing development. UX work happens in parallel, so there is no bottleneck.' },
+  { q:'What is AgileUX?', ans:'The practice of integrating UX design into agile software development cycles through parallel tracks and just-in-time design.' },
+  { q:'How short can agile development cycles be according to Lesson 7?', ans:'As short as 2 weeks.' },
+  { q:'In Cycle 0, what is each track doing?', ans:'Dev Track: Research & Vision. UX Track: UX Research & Product Vision. Both are in the discovery/planning phase.' },
+  { q:'What does "Eval C1 build" mean in Cycle 2 of the UX Track?', ans:'The UX team evaluates (tests and assesses) what the Dev team built in Cycle 1, providing feedback for future iterations.' },
+  { q:'How does the Parallel Tracks Model relate to the "Iterative Design" principle?', ans:'Both emphasize continuous testing and improvement. The Parallel Tracks Model operationalizes iterative design within agile by ensuring UX continuously evaluates what was built and designs improvements for the next cycle.' },
+  { q:'What is the difference between a Design Pattern and an Anti-Pattern?', ans:'A Design Pattern is a proven solution to a recurring problem. An Anti-Pattern is a poor design solution that looks acceptable but causes usability problems.' },
+  { q:'A dark pattern uses which 5 strategies?', ans:'Nagging, Obstruction, Sneaking, Interface Interference, and Forced Action.' },
+  { q:'How does Agile UX differ from traditional "waterfall" UX design?', ans:'In waterfall, UX is done fully before development begins. In Agile UX, design and development happen in parallel short sprints — UX stays one cycle ahead rather than completing all design upfront.' },
+  { q:'What role does "capturing real feedback" play in the Lean UX cycle?', ans:'It closes the feedback loop — real user data from an MVP release informs the next round of assumptions, designs, and builds, making each cycle more validated and user-centered.' },
+  { q:'In Cycle 3, Dev implements C2 designs. What was UX doing in Cycle 2 to prepare for this?', ans:'In Cycle 2, UX was designing the C3 designs (future) AND evaluating the C1 build. The C2 designs that Dev implements in Cycle 3 were created by UX in Cycle 1.' },
+  { q:'Why is it important that UX evaluates the previous Dev build while also designing ahead?', ans:'It ensures quality control and continuous improvement. Evaluation catches problems early while forward design maintains momentum — both must happen simultaneously to avoid delays and ensure user needs are met.' },
+];
+
+const cheatData = [
+  { title:'Usability Goals (6)', list:['Effectiveness – does what it should','Efficiency – supports tasks well','Safety – protects from danger','Utility – right functionality','Learnability – easy to learn','Memorability – easy to recall'] },
+  { title:'Double Diamond (4)', list:['Discover – gather insights','Define – frame the challenge','Develop – create & prototype','Deliver – finalize & launch'] },
+  { title:'Interaction Types (5)', list:['Instructing – user tells system','Conversing – dialog with system','Manipulating – move/hold objects','Exploring – move through space','Responding – system initiates'] },
+  { title:'Cognitive Processes (6)', list:['Attention','Perception (5 senses)','Memory','Learning (incidental/intentional)','Reading/Speaking/Listening','Problem-solving/Decision-making'] },
+  { title:"Norman's 3 Emotional Levels", list:['Visceral – first impressions','Behavioral – usability, efficiency','Reflective – meaning, memories'] },
+  { title:'Affdex 6 Emotions', list:['Anger','Contempt','Disgust','Fear','Joy','Sadness'] },
+  { title:'Types of Evaluation', list:['Controlled – usability testing, experiments','Natural – field studies, in-the-wild','Any Setting – heuristics, analytics, models'] },
+  { title:'Evaluation Quality Criteria', list:['Reliability – consistent results','Validity – measures what intended','Ecological Validity – real-world match','Bias – distortion in results','Scope – how far results generalize'] },
+  { title:'Prototyping Types', list:['Low-Fi – paper, cardboard, sketches','High-Fi – looks/functions like final','Storyboarding (Low-Fi)','Sketching (Low-Fi)','Index Cards (Low-Fi)'] },
+  { title:'Parallel Tracks Key Points', list:['UX always 1 cycle ahead of Dev','Cycle 0: Research & Vision both','MVP = Minimum Viable Product','Lean UX: Articulate→Design→Build→Release→Repeat','Agile cycles: as short as 2 weeks'] },
+  { title:'4 Pillars (Lesson 7)', list:['AgileUX – UX in agile cycles','Design Patterns – reusable solutions','Open Source – free frameworks','Design Tools – Balsamiq, Axure, Sketch'] },
+  { title:'Dark Pattern Strategies', list:['Nagging','Obstruction','Sneaking','Interface Interference','Forced Action'] },
+];
+
+// ============================================================
+// RENDER FUNCTIONS
+// ============================================================
+
+let mcScores = {correct:0,total:0};
+let tfScores = {correct:0,total:0};
+
+function renderMC() {
+  const container = document.getElementById('mc-questions');
+  container.innerHTML = '';
+  mcData.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <div class="lesson-tag">${item.lesson}</div>
+      <div class="q-num">Q${i+1} of ${mcData.length}</div>
+      <div class="q-text">${item.q}</div>
+      <div class="options">
+        ${item.opts.map((o,j)=>`<button class="opt-btn" onclick="checkMC(this,${i},${j})">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="mc-fb-${i}"></div>
+    `;
+    container.appendChild(div);
+  });
+  updateMCScore();
+}
+
+function checkMC(btn, qi, selected) {
+  const item = mcData[qi];
+  const opts = btn.parentElement.querySelectorAll('.opt-btn');
+  opts.forEach((b,j) => {
+    b.disabled = true;
+    if(j === item.ans) b.classList.add('correct');
+    else if(j === selected && selected !== item.ans) b.classList.add('wrong');
+  });
+  const fb = document.getElementById(`mc-fb-${qi}`);
+  if(selected === item.ans) {
+    fb.textContent = '✓ Correct!';
+    fb.className = 'feedback show correct-fb';
+    mcScores.correct++; mcScores.total++;
+  } else {
+    fb.innerHTML = `✗ Incorrect. The answer is: <strong>${item.opts[item.ans]}</strong>`;
+    fb.className = 'feedback show wrong-fb';
+    mcScores.total++;
+  }
+  updateMCScore();
+}
+
+function updateMCScore() {
+  document.getElementById('mc-score').innerHTML = `${mcScores.correct} <span class="denom">/ ${mcScores.total}</span>`;
+}
+
+function renderID() {
+  const container = document.getElementById('id-questions');
+  container.innerHTML = '';
+  idData.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <div class="q-num">ITEM ${i+1}</div>
+      <div class="q-text">${item.clue}</div>
+      <button class="reveal-btn" onclick="revealAnswer(this,'id-ans-${i}')">Reveal Answer</button>
+      <div class="answer-box" id="id-ans-${i}"><strong>Answer:</strong> ${item.ans}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function renderEnum() {
+  const container = document.getElementById('enum-questions');
+  container.innerHTML = '';
+  enumData.forEach((item, i) => {
+    const ansHtml = item.ans.map((a,j)=>`<div style="padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04);">${j+1}. ${a}</div>`).join('');
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <div class="q-num">SET ${i+1}</div>
+      <div class="q-text" style="font-weight:600;">${item.title}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Hint: ${item.hint}</div>
+      <button class="reveal-btn" onclick="revealAnswer(this,'enum-ans-${i}')">Reveal All (${item.ans.length} items)</button>
+      <div class="answer-box" id="enum-ans-${i}">${ansHtml}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function renderTF() {
+  const container = document.getElementById('tf-questions');
+  container.innerHTML = '';
+  tfData.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <div class="q-num">STATEMENT ${i+1}</div>
+      <div class="q-text">${item.stmt}</div>
+      <div class="tf-row">
+        <button class="tf-btn" onclick="checkTF(this,${i},true)">TRUE</button>
+        <button class="tf-btn" onclick="checkTF(this,${i},false)">FALSE</button>
+      </div>
+      <div class="feedback" id="tf-fb-${i}"></div>
+    `;
+    container.appendChild(div);
+  });
+  updateTFScore();
+}
+
+function checkTF(btn, qi, selected) {
+  const item = tfData[qi];
+  const row = btn.parentElement;
+  row.querySelectorAll('.tf-btn').forEach(b => {
+    b.disabled = true;
+    const bVal = b.textContent === 'TRUE';
+    if(bVal === item.ans) b.classList.add('correct');
+    else if(bVal === selected && selected !== item.ans) b.classList.add('wrong');
+  });
+  const fb = document.getElementById(`tf-fb-${qi}`);
+  if(selected === item.ans) {
+    fb.innerHTML = `✓ Correct! ${item.explain}`;
+    fb.className = 'feedback show correct-fb';
+    tfScores.correct++; tfScores.total++;
+  } else {
+    fb.innerHTML = `✗ Incorrect. It is <strong>${item.ans ? 'TRUE' : 'FALSE'}</strong>. ${item.explain}`;
+    fb.className = 'feedback show wrong-fb';
+    tfScores.total++;
+  }
+  updateTFScore();
+}
+
+function updateTFScore() {
+  document.getElementById('tf-score').innerHTML = `${tfScores.correct} <span class="denom">/ ${tfScores.total}</span>`;
+}
+
+function renderAnalysis() {
+  const container = document.getElementById('analysis-questions');
+  container.innerHTML = '';
+  analysisData.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <div class="q-num">ANALYSIS Q${i+1}</div>
+      <div class="q-text">${item.q}</div>
+      <button class="reveal-btn" onclick="revealAnswer(this,'an-ans-${i}')">Reveal Answer</button>
+      <div class="answer-box" id="an-ans-${i}">${item.ans}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function renderCheat() {
+  const container = document.getElementById('cheat-content');
+  container.innerHTML = '';
+  cheatData.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'mini-card';
+    div.innerHTML = `<div class="mini-title">${item.title}</div><ul class="mini-list">${item.list.map(l=>`<li>${l}</li>`).join('')}</ul>`;
+    container.appendChild(div);
+  });
+}
+
+function revealAnswer(btn, id) {
+  const box = document.getElementById(id);
+  if(box.classList.contains('show')) {
+    box.classList.remove('show');
+    btn.textContent = btn.textContent.replace('Hide','Reveal');
+  } else {
+    box.classList.add('show');
+    btn.textContent = btn.textContent.replace('Reveal','Hide');
+  }
+}
+
+function resetSection(sec) {
+  if(sec === 'mc') { mcScores = {correct:0,total:0}; renderMC(); }
+  if(sec === 'tf') { tfScores = {correct:0,total:0}; renderTF(); }
+}
+
+function switchTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// INIT
+renderMC();
+renderID();
+renderEnum();
+renderTF();
+renderAnalysis();
+renderCheat();
+</script>
+</body>
+</html>
